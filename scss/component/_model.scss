@@ -1,0 +1,71 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(100, 100, 100, 0.4);
+    transition-timing-function: 2s;
+  }
+  
+//   .modal{
+//     width: 90%;
+//     position: relative;
+//     top: 50px;
+//     margin-left:  auto;
+//     margin-right: auto;
+//     text-align: center;
+//     background-color: #fff;
+//     border: 1px solid #778;
+//     border-radius: 5px;
+//     padding: 30px;
+//     @include mq($md){
+//       width: 400px;
+//     }
+//     h2{
+//       padding: 7px 0;
+//       font-size: 1em;
+//     }
+//     p{
+//       padding: 5px 0;
+//       font-size: 0.8em;
+//     }
+//   }
+  hr{
+    margin: 25px 0;
+    border: 1px solid rgb(240, 240, 240);
+  }
+  .hidden{
+      display: none;
+      transition-duration: 1s;
+  }
+  
+  .modal-close{
+    position: absolute;
+    padding: 10px;
+    cursor: pointer;
+    right: 20px;
+    top: 10px;
+  }
+  
+  .arrow{
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    top: 190px;
+  }
+  .left {
+    transform: rotate(135deg);
+    float: left;
+    position: absolute;
+  
+    left: 20px;
+  }
+  .right{
+    transform: rotate(-45deg);
+    float: right;
+    position: absolute;
+  
+    right: 20px;
+  }
