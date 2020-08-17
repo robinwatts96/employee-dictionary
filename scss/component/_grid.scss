@@ -9,19 +9,19 @@
   header{
     grid-area: header;
   }
-//   main{
-//     margin: 0 15px;
-//     grid-area: main;
-//     display: grid;
-//     grid-template-columns: 1fr;
-//     grid-gap: 20px;
-//     @include mq($md){
-//       grid-template-columns: 1fr 1fr;
-//       grid-template-rows: repeat(6, 1fr);
-//     }
-//     @include mq($lg){
-//       grid-template-columns: 1fr 1fr 1fr;
-//       grid-template-rows: repeat(4, 1fr);
-//     }
-//   }
+  main{
+    margin: 0 15px;
+    grid-area: main;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+    @include mq($md){
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(6, 1fr);
+    }
+    @include mq($lg){
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: repeat(4, 1fr);
+    }
+  }
   
