@@ -1,181 +1,139 @@
-// Alert
-const alertBanner = document.getElementById("alert");
+// Global Variables 
+const listContainer = document.querySelector(".card-container");
+const rightArrow = document.querySelector(".right");
+const leftArrow = document.querySelector(".left");
+const showCard = document.getElementsByClassName("show");
+const overlay = document.querySelector(".overlay");
+const modalContainer = document.querySelector(".modal-content");
+const modalClose = document.querySelector(".modal-close");
+const url = `https://randomuser.me/api/?results=12&inc=name, picture,
+email, location, phone, dob &noinfo &nat=US`;
+const searchBar = document.getElementById("search");
+let employees;
+let data = [];
+let employeeHTML = "";
 
-// // HTML
-alertBanner.innerHTML = `<div class="alert-banner">
-                         <p><strong>Alert:</strong>This is an alert!!</p>
-                        <p class="alert-banner-close">X</p>
-                       </div>`
-  let pointer = document.querySelector('.alert-banner-close')
-  pointer.style.cursor = "pointer";
-    
-  // addEventListener 
- alertBanner.addEventListener('click', e => { 
-     const element = e.target;
-     
-    if(element.classList.contains("alert-banner-close")){
-         setTimeout(function(){
-             alertBanner.remove()
-           }, 200);
-        
-     };   
- });
+// function to get data from server
+const getData = async () => {
+  const response = await fetch(url);
+  data = await response.json();
+  employees = await data.results;
+  display(data);
+}
 
-//animation
-alertBanner.animate([
-    { transform: 'scale(1)', background: 'hsl(131, 39%, 68%)', opacity: 1, offset: 0 },
-    { transform: 'scale(.5) rotate(10deg)', background: 'hsl(131, 39%, 68%)', opacity: .1, offset: .2 },
-    { transform: 'scale(1) rotate(0deg)', background: 'hsl(131, 39%, 68%)', opacity: 1, offset: 1 },
-  ], {
-    duration: 750,
-    easing: 'ease-out', 
-    iterations: 1,
-    direction: 'alternate', 
-    fill: 'forwards' 
-  });
+// Runs function to get data
+getData();
 
+// Filter names on keyup
+searchBar.addEventListener("keyup", () => {
 
+  let personName = document.querySelectorAll(".name");
+  let card = document.querySelectorAll(".card");
+  let userInput = searchBar.value.toLowerCase();
 
-
-// Bell notification
-const bell = document.getElementById('notification-bell');
-const bellImg = document.querySelector('.bell');
-const bellDot = document.querySelector('.dot');
-const bellNotific = document.getElementById('notifications');
-
-
-let notList =['Mike Wheeler likes your activity', 'Billy Hargove has invited you to his swimming lesson'];
-
-//create unorderd list for notification
-
-const addList = () =>{
-    let ulList = document.createElement('ul');
-    ulList.classList.add( "ulList");
-    for(let i= 0; i < notList.length; i++){
-        ulList.innerHTML += `<li> ${notList[i]} <span>x</span> </li>`
+  for(let i = 0; i < data.results.length; i++){
+    if(searchBar !== ""){
+      if(personName[i].textContent.toLowerCase().indexOf(userInput) !== -1){
+        card[i].style.display = "";
+        card[i].classList.add("show");
+        card[i].setAttribute("data-index", i);
+      }else{
+        card[i].style.display = "none";
+        card[i].classList.remove("show");
+        card[i].removeAttribute("data-index");
+      }
     }
-        return ulList;
-} 
-
-const closeBox = addList (notList)
-bellNotific.appendChild(closeBox)
-
-
-closeBox.addEventListener('click', e =>{
-    if(e.target.textContent === 'x'){
-        const element = e.target;
-        const parent = element.parentNode;
-        setTimeout(function(){
-            parent.remove()
-           }, 200);  
-    }
-})
-
-  //open notification with addEventListener 
-bellImg.addEventListener('click', () => {
-    setTimeout(function(){
-    bellNotific.style.opacity = '1';
-    bellDot.style.display = 'none'; 
-    },500);                     
-  });
-
-
-
-
-
-// messaging widget 
-const user = document.querySelector(".form-field");
-const message = document.getElementById("messageField");
-const send = document.getElementById("send");
-
-send.addEventListener('click', (e) => {
-   
-//     //ensure user and message fields are filled out
-    if(user.value === "" && message.value === ""){
-        e.preventDefault();
-        //to add message not alert
-        let message = document.querySelector('#message');
-        message.classList.add('error')
-        message.innerHTML = "Please fill out before sending!";
-        //to disappear in 3s
-        setTimeout(() => message.remove(), 3000)
-        // alert("Please fill out user and message fields before sending");
-    }else if(user.value === ""){
-        alert("Please fill out user before sending");
-    }else if(message.value === ""){
-        alert("Please fill out message field before sending");
-    }else{
-        alert(`Message sent to: ${user.value}`);
-    }
+  }
 });
 
+// function to display profile cards
+function display(data){ 
 
-// Search
-const names = ['Victoria Chambers', 'Dave Bird','Down Wood', 'Dan Oliver']
-  
-let searchList = document.querySelector('#searchList')
+  for(let i = 0; i < showCard.length; i ++){
+    let name = employees[i].name;
+    let email = employees[i].email;
+    let city = employees[i].location.city;
+    let picture = employees[i].picture;
 
-  
-searchList.addEventListener('keyup', function(e){
-  document.getElementById('datalist').innerHTML = '';     
+    if(showCard.display !== "none"){
+      employeeHTML += `
+      <div class="card show" data-index="${i}">
+      `;
+    }else{
+      employeeHTML += `
+      <div class="card" data-index="#">
+      `;
+    }
+    // setup HTML code and store it in variable
+    employeeHTML += `
+    <img class="avatar" src="${picture.large}" alt="profile pic">
+    <div class="text-container">
+      <h2 class="name">${name.first} ${name.last}</h2>
+      <p class="email">${email}</p>
+      <p class="address">${city}</p>
+    </div>
+  </div>
+    `;
+  }
+  // add HTML code to card container in HTML
+  listContainer.innerHTML = employeeHTML;
+}
 
-  //input query length 
-for (let i = 0; i<names.length; i++) { 
-  if(((names[i].toLowerCase()).indexOf(searchList.value.toLowerCase()))>-1) 
-  { 
+// Moal display function
+function displayModal(index){
+  // create object to hold info
+  let {name, dob, phone, email, location:
+     { city, street, state, postcode}, picture}
+      = employees[index];
+  // Data object for dob
+  let date = new Date(dob.date);
 
-      let option = document.createElement("option"); 
-      let nameList = document.createTextNode(names[i]); 
-       option.appendChild(nameList); 
+  const modalHTML = `
+  <img class="avatar" src="${picture.large}" alt="profile pic">
+  <div class="modal-text">
+    <h2 class="name">${name.first} ${name.last}</h2>
+    <p class="email">${email}</p>
+    <p class="address">${city}</p>
+    <hr />
+    <p>${phone}</p>
+    <p class="address">${street.number} ${street.name} ${city}, ${state} ${postcode}</p>
+    <p>Birthday: ${date.getMonth()}/${date.getDate()}/${date.getFullYear()}</p>
+  </div>
+  `;
 
-        document.getElementById("datalist").appendChild(option); 
-      } 
-  } 
+  // remove hidden class to display overlay of modal, and add modal HTML data
+  overlay.classList.remove("hidden");
+  modalContainer.innerHTML = modalHTML;
+}
+
+// CLick function to display modal for profile that is clicked
+listContainer.addEventListener("click", e =>{
+  // find closest card, and get index of that card
+  if(e.target !== listContainer){
+    const card = e.target.closest(".card");
+    let index = card.getAttribute("data-index");
+
+    let nextIndex = parseInt(index);
+  // run function to display data from that specific index of card
+    displayModal(index);
+
+  // move to next or previous card with all cards showing
+    rightArrow.addEventListener("click", () =>{
+      if(nextIndex < 11){
+        nextIndex += 1;
+        displayModal(nextIndex);
+      }  
+    });
+    leftArrow.addEventListener("click", () =>{
+      if(nextIndex > 0){
+        nextIndex -= 1;
+        displayModal(nextIndex);
+      }
+    });
+  }
 });
 
-
-
-//local storage 
-
-let emailInput = document.getElementById('emailInput');
-let publicInput = document.getElementById('publicInput');
-let timezone = document.getElementById('timezone');
-
- let save = document.getElementById('save');
- let cancel = document.getElementById('cancel');
-
- 
- let emailLocal = localStorage.getItem("email");
-    if(emailLocal && emailLocal === "true"){
-        emailInput.checked = true;
-    }else{
-        emailInput.checked = false;
-    }
-let publicLocal = localStorage.getItem("public");
-    if(publicLocal && publicLocal === "true"){
-        publicInput.checked = true;
-    }else{
-        publicInput.checked = false;
-    }
-
-    timezone.value = localStorage.getItem("timezone");
-
-    save.addEventListener('click', () =>{
-        event.preventDefault();
-       localStorage.setItem("email", emailInput.checked);
-       localStorage.setItem("public", publicInput.checked);
-       localStorage.setItem("timezone", timezone.value);
-       alert('Your changes successfully saved!');
-        
-        location.reload();
-    })
-
-    cancel.addEventListener('click', () =>{
-        event.preventDefault();
-        
-        // alert('Your changes successfully removed!')
-        if (window.confirm("Do you want to delete your savings?")) 
-            localStorage.clear();
-         
-            location.reload();
-    })
+// Close modal
+modalClose.addEventListener("click", () =>{
+  overlay.classList.add("hidden");
+});
